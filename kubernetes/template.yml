@@ -1,0 +1,114 @@
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: Core
+  labels:
+    app: Core
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: Core
+  template:
+    metadata:
+      labels:
+        app: Core
+    spec:
+      containers:
+        - name: Core
+          image: username/Core:latest
+          ports:
+            - containerPort: 8080
+          readinessProbe:
+            httpGet:
+              path: '/actuator/health'
+              port: 8080
+            initialDelaySeconds: 10
+            timeoutSeconds: 2
+            periodSeconds: 5
+            failureThreshold: 10
+          livenessProbe:
+            httpGet:
+              path: '/actuator/health'
+              port: 8080
+            initialDelaySeconds: 120
+            timeoutSeconds: 2
+            periodSeconds: 5
+            failureThreshold: 5
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: Support
+  labels:
+    app: Support
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: Support
+  template:
+    metadata:
+      labels:
+        app: Support
+    spec:
+      containers:
+        - name: Support
+          image: username/Support:latest
+          ports:
+            - containerPort: 8080
+          readinessProbe:
+            httpGet:
+              path: '/actuator/health'
+              port: 8080
+            initialDelaySeconds: 10
+            timeoutSeconds: 2
+            periodSeconds: 5
+            failureThreshold: 10
+          livenessProbe:
+            httpGet:
+              path: '/actuator/health'
+              port: 8080
+            initialDelaySeconds: 120
+            timeoutSeconds: 2
+            periodSeconds: 5
+            failureThreshold: 5
+
+
+---
+
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: Core
+  labels:
+    app: Core
+spec:
+  ports:
+    - port: 8080
+      targetPort: 8080
+  selector:
+    app: Core
+
+
+---
+
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: Support
+  labels:
+    app: Support
+spec:
+  ports:
+    - port: 8080
+      targetPort: 8080
+  selector:
+    app: Support
+
